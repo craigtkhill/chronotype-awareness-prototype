@@ -5,8 +5,8 @@ UiBooster booster;
 int rowNumber;
 
 int score;
-float variableNumber;
 float totalScore;
+float maxPossibleScore;
 
 String question;
 String description;
@@ -15,10 +15,6 @@ Integer max;
 Integer start;
 Integer tick1;
 Integer tick2;
-
-Integer idealWakeUpTime;
-Integer idealSleepTime;
-Integer alarmDependence;
 
 Table table;
 
@@ -36,14 +32,17 @@ void setup() {
 }
 
 void draw() {
+  textAlign(CENTER, CENTER);
+  textSize(36);
   background(#112233);
+  
   getData(rowNumber);
   rowNumber += 1;
   slider(question, description, min, max, start, tick1, tick2);
   
-  textAlign(CENTER, CENTER);
-  textSize(32);
-  text("Progress " + totalScore / variableNumber, width/2, height/2);
+  //text(question + "\n" + description, width/2, height/3);
+  text("You are " + round((totalScore / maxPossibleScore) * 100) + "% Evening Owl", width/2, height/2);
+  
 
   // if rowNumber > table.getColumnCount() then display splashscreen
 
@@ -61,6 +60,10 @@ void getData(int rowNumber) {
 
 void slider(String question, String description, int min, int max, int start, int tick1, int tick2) {
   score = booster.showSlider(question, description, min, max, start, tick1, tick2);
+  if (maxPossibleScore == 4) {
+    score *= 6;
+    max *=6;
+  }
   totalScore += score;
-  variableNumber +=1;
+  maxPossibleScore +=max;
 }
