@@ -1,0 +1,4 @@
+question,description,min,max,start,tick1,tick2
+"Approximately what time would you get up if you were entirely free to plan your day?","Ideal Wakeup Time",0,24,8,2,1
+"Approximately what time would you go to bed if you were entirely free to plan your evening?","Ideal Sleep Time",0,24,22,2,1
+"If you usually have to get up at a specific time in the morning,how much do you depend on an alarm clock?","1 = Not at all, 2 = Slightly, 3 = Somewhat, 4 = Very Much",1,4,2,1,1
