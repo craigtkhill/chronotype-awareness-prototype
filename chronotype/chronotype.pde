@@ -4,136 +4,76 @@ import controlP5.*;
 ControlP5 cp5;
 UiBooster booster;
 
-int rowNumber;
-
+// Score Variables
 int score;
 float totalScore;
-float maxPossibleScore;
-int [] temp;
+float maxScore;
+int [] newAndMaxScore;
 
+// Morning-Evening Scale Variables
+Table MORNING_EVENING_SCALE;
+int currentRowNumber = 0;
+int TOTAL_ROW_NUMBER;
 String question;
 String description;
-Integer min;
-Integer max;
-Integer start;
-Integer tick1;
-Integer tick2;
+Integer minValue;
+Integer manValue;
+Integer defaultStartPosition;
+Integer stepTickValue;
+Integer stepForTicks;
 String scale;
 
-Table table;
+// Images
+PImage BACKGROUND_IMAGE;
+PImage MORNING_LARK;
+PImage NIGHT_OWL;
+PImage HUMMINGBIRD;
 
 void setup() {
+  // Setup to approximate a mobile device size
   size(400, 850);
   background(#112233);
-  noStroke();
 
-  cp5 = new ControlP5(this);
   booster = new UiBooster();
+  cp5 = new ControlP5(this);
 
-  table = loadTable("data/questions.csv", "header");
+  // Load the table containing all the question data
+  MORNING_EVENING_SCALE = loadTable("data/questions.csv", "header");
+  
+  // Used to check when all the rows have been iterated through
+  TOTAL_ROW_NUMBER = MORNING_EVENING_SCALE.getRowCount();
 
-  println(table.getRowCount() + " total rows in table");
+  // Load the images
+  BACKGROUND_IMAGE = loadImage("images/background.png");
+  MORNING_LARK = loadImage("images/morning_lark.png");
+  NIGHT_OWL = loadImage("images/night_owl.png");
+  HUMMINGBIRD = loadImage("images/hummingbird.png");
 
-  rowNumber = 0;
+  // Draw the main background image to the screen
+  image(BACKGROUND_IMAGE, CENTER, CENTER);
 }
 
 void draw() {
-  textAlign(CENTER, CENTER);
-  textSize(36);
-  background(#112233);
-
-  getData(rowNumber);
-  rowNumber += 1;
-  temp = slider(question, description, min, max, start, tick1, tick2, scale); // we should use the ControlP5 library for the slider
-  totalScore += temp[0];
-  maxPossibleScore += temp[1];
-  int percentage = round(totalScore / maxPossibleScore * 100);
-  if (percentage < 50) {
-    text("You are more of a\nevening owl ", width/2, height/2);
-  } else {
-    text("You are more of a\nmorning lark ", width/2, height/2);
+  // if there are still questions to be displayed 
+  if (currentRowNumber < TOTAL_ROW_NUMBER) {
+    
+    // get the data from the next row
+    getData(currentRowNumber);
+    
+    // ask the user to answer the question and return an array 
+    // with the answer with the max possible score
+    newAndMaxScore = slider(question, description, 
+                            minValue, manValue, 
+                            defaultStartPosition, 
+                            stepTickValue, stepForTicks, 
+                            scale);
+    
+    // increment the variables with the new scores
+    totalScore += newAndMaxScore[0];
+    maxScore += newAndMaxScore[1];
+    
+    // Then update the slider showing the degree 
+    // to which the person is a night owl or morning lark
+    showSlider(totalScore, maxScore);
   }
-  println(percentage);
-
-  // if rowNumber > table.getColumnCount() then display splashscreen
 }
-
-void getData(int rowNumber) {
-  question = table.getString(rowNumber, "question");
-  description = table.getString(rowNumber, "description");
-  min = table.getInt(rowNumber, "min");
-  max = table.getInt(rowNumber, "max");
-  start = table.getInt(rowNumber, "start");
-  tick1 = table.getInt(rowNumber, "tick1");
-  tick2 = table.getInt(rowNumber, "tick2");
-  scale = table.getString(rowNumber, "scale");
-}
-
-int [] slider(String question, String description, int min, int max, int start, int tick1, int tick2, String scale) {
-  score = booster.showSlider(question, description, min, max, start, tick1, tick2);
-  Integer newScore = 0;
-  Integer maxScore = 0;
-
-  // Morning Scale 24 hours
-  if (max == 24 && scale.equals("inverse")) {
-    maxScore = 7;
-    if (score > 14) {
-      newScore = 1;
-    } else if (score > 12 && score < 14) {
-      newScore = 2;
-    } else if (score > 10 && score < 12) {
-      newScore = 3;
-    } else if (score > 8 && score < 10) {
-      newScore = 4;
-    } else if (score > 6 && score < 8) {
-      newScore = 5;
-    } else if (score > 4 && score < 6) {
-      newScore = 6;
-    } else if (score < 4) {
-      newScore = 7;
-    }
-  }
-
-  // Evening Scale 24 hours
-  else if (max == 24 && scale.equals("normal")) {
-    maxScore = 7;
-    if (score >= 2 && score < 4) {
-      newScore = 1;
-    } else if (score > 0 && score < 2) {
-      newScore = 2;
-    } else if (score > 22 && score < 24) {
-      newScore = 3;
-    } else if (score > 20 && score < 22) {
-      newScore = 4;
-    } else if (score > 18 && score < 20) {
-      newScore = 5;
-    } else if (score > 16 && score < 18) {
-      newScore = 6;
-    } else {
-      newScore = 7;
-    }
-  } else if (max == 4 && scale.equals("inverse")) {
-    maxScore = 4;
-    if (score == 1) {
-      newScore = 4;
-    } else if (score == 2 ) {
-      newScore = 3;
-    } else if (score == 3) {
-      newScore = 2;
-    } else if (score == 4) {
-      newScore = 1;
-    }
-  } else {
-    maxScore = 4;
-    newScore = score;
-  }
-
-  return new int [] {newScore, maxScore};
-}
-
-
-//cp5.addSlider("slider")
-//.setPosition(100, 305)
-//.setSize(200, 20)
-//.setRange(min, max)
-//.setValue(128);
