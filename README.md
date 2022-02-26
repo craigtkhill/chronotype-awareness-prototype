@@ -4,3 +4,4 @@ Chronotype awareness app prototype developed with processing for authoring assig
 ![morning lark](chronotype/images/morning_lark.png)
 ![hummingbird](chronotype/images/hummingbird.png)
 ![night owl](chronotype/images/night_owl.png)
+![background](chronotype/images/background.png)
